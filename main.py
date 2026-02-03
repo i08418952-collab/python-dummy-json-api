@@ -14,12 +14,22 @@ def download_file(file_url: str):
 
 
 def main() -> None:
-    url = 'https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp'
-    path = download_file(file_url=url)
+    api_url = "https://dummyjson.com/products?limit=20"
+    response = requests.get(api_url)
+    response.raise_for_status()
 
-    {
-        'name': '',
-        'image': path
-    }
+    products_data = response.json()["products"]
+    products = []
+    for product in products_data:
+        name = product["title"]
+        image_url = product["thumbnail"]
+        path = download_file(image_url)
+
+        products.append({
+            'name': name,
+            'image': path
+        })
+    
+    print(products)
 
 main()
